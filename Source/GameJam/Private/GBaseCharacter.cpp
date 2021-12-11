@@ -3,6 +3,7 @@
 #include "GBaseCharacter.h"
 #include "Camera/CameraComponent.h"
 #include "GameFrameWork/SpringArmComponent.h"
+#include "Kismet/KismetSystemLibrary.h"
 
 AGBaseCharacter::AGBaseCharacter()
 {
@@ -34,6 +35,7 @@ void AGBaseCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComp
 	InputComponent->BindAxis("MoveRight", this, &AGBaseCharacter::MoveRight);
 	InputComponent->BindAction("Jump", IE_Pressed, this, &AGBaseCharacter::Jump);
 	InputComponent->BindAxis("TurnAround", this, &AGBaseCharacter::AddControllerYawInput);
+	InputComponent->BindAction("EscapeButton", IE_Pressed, this, &AGBaseCharacter::CloseGame);
 }
 
 void AGBaseCharacter::MoveForward(float Amount)
@@ -48,4 +50,21 @@ void AGBaseCharacter::MoveRight(float Amount)
 	if (FMath::IsNearlyZero(Amount)) return;
 
 	AddMovementInput(GetActorRightVector(), Amount);
+	
+}
+
+void AGBaseCharacter::CloseGame()
+{
+	TEnumAsByte<EQuitPreference::Type> QuitType = TEnumAsByte<EQuitPreference::Type>::TEnumAsByte();
+	UKismetSystemLibrary::QuitGame(GetWorld(), Cast<APlayerController>(GetController()), QuitType, false);
+}
+
+void AGBaseCharacter::OnDead()
+{
+	SetLifeSpan(5.0f);
+	if (Controller)
+	{
+		Controller->ChangeState(NAME_Spectating);
+	}
+
 }
