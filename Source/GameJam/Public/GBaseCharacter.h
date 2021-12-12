@@ -17,8 +17,14 @@ class GAMEJAM_API AGBaseCharacter : public ACharacter
 public:
 	AGBaseCharacter();
 
+	UFUNCTION(BlueprintCallable)
+	float GetDirection();
+
 	virtual void Tick(float DeltaTime) override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
+	UFUNCTION(BlueprintCallable)
+	bool IsHintActive() { return IsActive; };
 
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -31,6 +37,9 @@ protected:
 private:
 	void MoveForward(float Amount);
 	void MoveRight(float Amount);
-	void CloseGame();
+	void OpenMenu();
 	void OnDead();
+	void Hint();
+
+	bool IsActive = false;
 };
